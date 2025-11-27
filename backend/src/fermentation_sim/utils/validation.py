@@ -1,10 +1,12 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SimulationRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
     # Initial conditions
-    X0: float = Field(..., gt=0, description="Initial biomass (g/L)")
-    S0: float = Field(..., gt=0, description="Initial substrate (g/L)")
+    X0: float = Field(1.0, gt=0, description="Initial biomass (g/L)")
+    S0: float = Field(20.0, gt=0, description="Initial substrate (g/L)")
     P0: float = Field(0, ge=0, description="Initial product (g/L)")
     DO0: float = Field(0.005, gt=0, description="Initial DO (g/L)")
     T0: float = Field(30.0, gt=0, description="Initial temperature (°C)")
@@ -38,6 +40,3 @@ class SimulationRequest(BaseModel):
     agitation_speed: float = Field(300.0, gt=0)
     cooling_temp: float = Field(25.0, gt=0)
     coolant_flow: float = Field(1.0, ge=0)
-
-    class Config:
-        extra = "ignore"

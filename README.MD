@@ -3,7 +3,7 @@ make
 # Produces libfermentation.so
 
 #backend
-cd backend
+cd backend/src
 uvicorn fermentation_sim.api.main:app --reload
 
 #frontend

@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   ResponsiveContainer
 } from "recharts";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 
 function TimeSeriesCharts({ result }) {
   if (!result) {
@@ -37,13 +37,18 @@ function TimeSeriesCharts({ result }) {
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="t" label={{ value: "Time (h)", position: "insideBottomRight", offset: -5 }} />
-              <YAxis />
+              <YAxis yAxisId={0} label={{ value: "Concentration (g/L)", angle: -90, position: "insideLeft" }} />
+              <YAxis
+                yAxisId={1}
+                orientation="right"
+                label={{ value: "Temperature (°C)", angle: 90, position: "insideRight" }}
+              />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="X" stroke="#00e676" dot={false} />
-              <Line type="monotone" dataKey="S" stroke="#ffeb3b" dot={false} />
-              <Line type="monotone" dataKey="P" stroke="#ff9800" dot={false} />
-              <Line type="monotone" dataKey="DO" stroke="#2196f3" dot={false} />
+              <Line type="monotone" dataKey="X" stroke="#00e676" dot={false} yAxisId={0} />
+              <Line type="monotone" dataKey="S" stroke="#ffeb3b" dot={false} yAxisId={0} />
+              <Line type="monotone" dataKey="P" stroke="#ff9800" dot={false} yAxisId={0} />
+              <Line type="monotone" dataKey="DO" stroke="#2196f3" dot={false} yAxisId={0} />
               <Line type="monotone" dataKey="T" stroke="#f44336" dot={false} yAxisId={1} />
             </LineChart>
           </ResponsiveContainer>

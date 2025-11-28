@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Box,
   Grid,
   TextField,
   Typography
@@ -32,9 +33,14 @@ function ParameterForm({ values, onChange }) {
 
   return (
     <>
-      <Typography variant="subtitle1" gutterBottom>
-        Process Parameters
-      </Typography>
+      <Box display="flex" alignItems="center" justifyContent="space-between">
+        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 700 }}>
+          Process Parameters
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          Guardrails for batch physics and biology
+        </Typography>
+      </Box>
       <Grid container spacing={1}>
         {numericFields.map((f) => (
           <Grid item xs={6} md={4} key={f.name}>
@@ -45,6 +51,20 @@ function ParameterForm({ values, onChange }) {
               label={f.label}
               value={values[f.name] ?? f.defaultValue}
               onChange={handleChange(f.name)}
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "rgba(255,255,255,0.03)",
+                  borderRadius: 2,
+                  "& fieldset": {
+                    borderColor: "rgba(255,255,255,0.08)"
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#4dd9f7"
+                  }
+                }
+              }}
             />
           </Grid>
         ))}

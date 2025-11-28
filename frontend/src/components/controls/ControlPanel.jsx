@@ -4,11 +4,13 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  Stack
+  Stack,
+  Typography
 } from "@mui/material";
 import ParameterForm from "./ParameterForm.jsx";
 
@@ -57,10 +59,35 @@ function ControlPanel({ onRun }) {
   };
 
   return (
-    <Card variant="outlined">
+    <Card
+      variant="outlined"
+      sx={{
+        height: "100%",
+        background:
+          "linear-gradient(160deg, rgba(12, 18, 38, 0.95), rgba(12, 20, 46, 0.85))"
+      }}
+    >
       <CardContent>
-        <Stack spacing={2}>
-          <Box display="flex" gap={2} alignItems="center">
+        <Stack spacing={2.5}>
+          <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ letterSpacing: 0.3 }}>
+                Simulation Control
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                Configure the run
+              </Typography>
+            </Box>
+            <Chip
+              label="Realtime"
+              size="small"
+              color="secondary"
+              sx={{ bgcolor: "rgba(100,255,218,0.12)", border: "1px solid rgba(100,255,218,0.3)" }}
+              variant="outlined"
+            />
+          </Box>
+
+          <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
             <FormControl size="small" sx={{ minWidth: 160 }}>
               <InputLabel>Mode</InputLabel>
               <Select
@@ -72,10 +99,22 @@ function ControlPanel({ onRun }) {
                 <MenuItem value="fed_batch">Fed-batch (stub)</MenuItem>
               </Select>
             </FormControl>
-            <Button variant="contained" onClick={handleSubmit}>
+            <Button
+              variant="contained"
+              size="medium"
+              onClick={handleSubmit}
+              sx={{
+                px: 2.8,
+                py: 1,
+                borderRadius: 2,
+                boxShadow: "0 10px 30px rgba(77, 217, 247, 0.4)",
+                background: "linear-gradient(135deg, #4dd9f7, #64ffda)"
+              }}
+            >
               Run Simulation
             </Button>
           </Box>
+
           <ParameterForm values={values} onChange={handleFieldChange} />
         </Stack>
       </CardContent>

@@ -80,3 +80,5 @@ Use the control panel to pick microbe/substrate, load preset, and run simulation
 - Default C core is used when feasible; Python fallback handles edge cases.
 - Frontend assumes backend available at `/api` (proxy/serve accordingly).
 - You can extend presets or swap the in-memory store for a database without changing the merging contract.
+
+![alt text](image.png)

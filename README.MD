@@ -81,4 +81,4 @@ Use the control panel to pick microbe/substrate, load preset, and run simulation
 - Frontend assumes backend available at `/api` (proxy/serve accordingly).
 - You can extend presets or swap the in-memory store for a database without changing the merging contract.
 
-![alt text](image.png)
+![alt text](<Screenshot 2025-11-29 172649.png>)

@@ -4,6 +4,10 @@ from pydantic import BaseModel, ConfigDict, Field
 class SimulationRequest(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
+    # Contextual preset selectors
+    microbe_id: str | None = Field(None, description="Optional microbe preset id")
+    substrate_id: str | None = Field(None, description="Optional substrate preset id")
+
     # Initial conditions
     X0: float = Field(1.0, gt=0, description="Initial biomass (g/L)")
     S0: float = Field(20.0, gt=0, description="Initial substrate (g/L)")

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -13,6 +13,7 @@ import {
   Typography
 } from "@mui/material";
 import ParameterForm from "./ParameterForm.jsx";
+import { getMicrobes, getPreset, getSubstrates } from "../../api/client.js";
 
 const defaultState = {
   X0: 1,
@@ -55,12 +56,17 @@ const defaultState = {
   cooling_temp: 25,
   coolant_flow: 1,
   agit_power_coeff: 2.0,
-  agit_heat_eff: 0.5
+  agit_heat_eff: 0.5,
+  microbe_id: "",
+  substrate_id: ""
 };
 
 function ControlPanel({ onRun }) {
   const [values, setValues] = useState(defaultState);
   const [mode, setMode] = useState("batch");
+  const [microbes, setMicrobes] = useState([]);
+  const [substrates, setSubstrates] = useState([]);
+  const [loadingPreset, setLoadingPreset] = useState(false);
 
   const handleFieldChange = (name, value) => {
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -73,6 +79,64 @@ function ControlPanel({ onRun }) {
   const handleSubmit = () => {
     onRun(values, mode);
   };
+
+  const loadMicrobes = async () => {
+    try {
+      const list = await getMicrobes();
+      setMicrobes(list);
+      if (list.length > 0) {
+        const first = list[0].id;
+        handleMicrobeChange(first);
+      }
+    } catch (err) {
+      console.error("Failed to load microbes", err);
+    }
+  };
+
+  const handleMicrobeChange = async (microbeId) => {
+    setValues((prev) => ({ ...prev, microbe_id: microbeId, substrate_id: "" }));
+    if (!microbeId) {
+      setSubstrates([]);
+      return;
+    }
+    try {
+      const subs = await getSubstrates(microbeId);
+      setSubstrates(subs);
+      if (subs.length > 0) {
+        const first = subs[0].id;
+        setValues((prev) => ({ ...prev, substrate_id: first }));
+      }
+    } catch (err) {
+      console.error("Failed to load substrates", err);
+    }
+  };
+
+  const handleSubstrateChange = (substrateId) => {
+    setValues((prev) => ({ ...prev, substrate_id: substrateId }));
+  };
+
+  const handleLoadPreset = async () => {
+    if (!values.microbe_id || !values.substrate_id) return;
+    try {
+      setLoadingPreset(true);
+      const resp = await getPreset(values.microbe_id, values.substrate_id);
+      const preset = resp?.preset?.defaults || {};
+      setValues((prev) => ({
+        ...prev,
+        ...preset,
+        microbe_id: values.microbe_id,
+        substrate_id: values.substrate_id
+      }));
+    } catch (err) {
+      console.error("Failed to load preset", err);
+    } finally {
+      setLoadingPreset(false);
+    }
+  };
+
+  useEffect(() => {
+    loadMicrobes();
+  }, []);
 
   return (
     <Card
@@ -104,17 +168,43 @@ function ControlPanel({ onRun }) {
           </Box>
 
           <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
-            <FormControl size="small" sx={{ minWidth: 160 }}>
+            <FormControl size="small" sx={{ minWidth: 140 }}>
               <InputLabel>Mode</InputLabel>
-            <Select
-              label="Mode"
-              value={mode}
-              onChange={(e) => handleModeChange(e.target.value)}
-            >
-              <MenuItem value="batch">Batch</MenuItem>
-              <MenuItem value="fed_batch">Fed-batch</MenuItem>
-            </Select>
-          </FormControl>
+              <Select
+                label="Mode"
+                value={mode}
+                onChange={(e) => handleModeChange(e.target.value)}
+              >
+                <MenuItem value="batch">Batch</MenuItem>
+                <MenuItem value="fed_batch">Fed-batch</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ minWidth: 180 }}>
+              <InputLabel>Microbe</InputLabel>
+              <Select
+                label="Microbe"
+                value={values.microbe_id}
+                onChange={(e) => handleMicrobeChange(e.target.value)}
+              >
+                <MenuItem value="">None</MenuItem>
+                {microbes.map((m) => (
+                  <MenuItem key={m.id} value={m.id}>{m.label}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ minWidth: 180 }} disabled={!values.microbe_id}>
+              <InputLabel>Substrate</InputLabel>
+              <Select
+                label="Substrate"
+                value={values.substrate_id}
+                onChange={(e) => handleSubstrateChange(e.target.value)}
+              >
+                <MenuItem value="">None</MenuItem>
+                {substrates.map((s) => (
+                  <MenuItem key={s.id} value={s.id}>{s.label}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Button
               variant="contained"
               size="medium"
@@ -128,6 +218,15 @@ function ControlPanel({ onRun }) {
               }}
             >
               Run Simulation
+            </Button>
+            <Button
+              variant="outlined"
+              size="medium"
+              onClick={handleLoadPreset}
+              disabled={!values.microbe_id || !values.substrate_id || loadingPreset}
+              sx={{ borderRadius: 2 }}
+            >
+              {loadingPreset ? "Loading..." : "Load Preset"}
             </Button>
           </Box>
 

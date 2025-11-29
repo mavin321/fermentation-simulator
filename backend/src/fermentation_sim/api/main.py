@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from fermentation_sim.api.routes import simulation, metadata
+from fermentation_sim.api.routes import simulation, metadata, presets
 from fermentation_sim.config import settings
 
 
@@ -24,6 +24,7 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(metadata.router)
+    app.include_router(presets.router)
     app.include_router(simulation.router)
     return app
 

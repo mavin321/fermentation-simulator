@@ -3,6 +3,7 @@ from typing import Literal
 
 import numpy as np
 
+from fermentation_sim.data.preset_service import merge_request_with_preset
 from fermentation_sim.models.batch_model import BatchFermentationModel
 from fermentation_sim.models.fed_batch_model import FedBatchFermentationModel
 from fermentation_sim.utils.validation import SimulationRequest
@@ -20,6 +21,7 @@ class SimulationService:
         payload: SimulationRequest,
         mode: Literal["batch", "fed_batch"] = "batch",
     ) -> dict:
+        payload = merge_request_with_preset(payload)
         if mode == "batch":
             result = self._batch_model.simulate(payload)
             state = result.state

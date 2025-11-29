@@ -23,6 +23,10 @@ class SimulationRequest(BaseModel):
     Ypx: float = Field(0.1, ge=0)
     kd: float = Field(0.01, ge=0)
     Kio: float = Field(0.0001, gt=0)
+    Kp: float = Field(50.0, gt=0, description="Product inhibition constant (g/L)")
+    maintenance: float = Field(0.005, ge=0, description="Non-growth substrate maintenance (g/gX/h)")
+    Q10: float = Field(2.0, ge=0, description="Temperature factor for mu")
+    T_ref: float = Field(30.0, gt=0, description="Reference temperature (°C)")
     Kla: float = Field(200.0, gt=0)
     C_star: float = Field(0.007, gt=0)
     O2_maintenance: float = Field(0.0005, ge=0)
@@ -35,8 +39,20 @@ class SimulationRequest(BaseModel):
     # Operating conditions
     volume: float = Field(5.0, gt=0)
     feed_rate: float = Field(0.0, ge=0)
+    feed_start: float = Field(0.0, ge=0, description="Feed start time (h)")
     feed_substrate_conc: float = Field(500.0, ge=0)
+    feed_rate_end: float = Field(0.0, ge=0, description="Target feed rate for ramp/exponential (L/h)")
+    feed_tau: float = Field(2.0, ge=0, description="Time constant for exponential feed (h)")
+    feed_mode: str = Field(
+        "constant",
+        pattern="^(constant|ramp|exponential|do_control)$",
+        description="Feed strategy",
+    )
+    do_setpoint: float = Field(0.0, ge=0, description="DO setpoint for do_control mode (g/L)")
+    do_Kp: float = Field(0.0, ge=0, description="Proportional gain for DO-based feed control")
     aeration_rate: float = Field(1.0, gt=0)
     agitation_speed: float = Field(300.0, gt=0)
     cooling_temp: float = Field(25.0, gt=0)
     coolant_flow: float = Field(1.0, ge=0)
+    agit_power_coeff: float = Field(2.0, ge=0, description="Mechanical power coefficient (W/(L*rpm^3))")
+    agit_heat_eff: float = Field(0.5, ge=0, le=1, description="Fraction of mechanical power to heat")

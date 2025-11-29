@@ -29,6 +29,10 @@ const defaultState = {
   Ypx: 0.1,
   kd: 0.01,
   Kio: 0.0001,
+  Kp: 50,
+  maintenance: 0.005,
+  Q10: 2.0,
+  T_ref: 30,
   Kla: 200,
   C_star: 0.007,
   O2_maintenance: 0.0005,
@@ -39,11 +43,19 @@ const defaultState = {
   rho: 1000,
   volume: 5,
   feed_rate: 0,
+  feed_rate_end: 0,
+  feed_tau: 2,
+  feed_mode: "constant",
+  feed_start: 0,
   feed_substrate_conc: 500,
+  do_setpoint: 0,
+  do_Kp: 0,
   aeration_rate: 1,
   agitation_speed: 300,
   cooling_temp: 25,
-  coolant_flow: 1
+  coolant_flow: 1,
+  agit_power_coeff: 2.0,
+  agit_heat_eff: 0.5
 };
 
 function ControlPanel({ onRun }) {
@@ -52,6 +64,10 @@ function ControlPanel({ onRun }) {
 
   const handleFieldChange = (name, value) => {
     setValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
   };
 
   const handleSubmit = () => {
@@ -90,15 +106,15 @@ function ControlPanel({ onRun }) {
           <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
             <FormControl size="small" sx={{ minWidth: 160 }}>
               <InputLabel>Mode</InputLabel>
-              <Select
-                label="Mode"
-                value={mode}
-                onChange={(e) => setMode(e.target.value)}
-              >
-                <MenuItem value="batch">Batch</MenuItem>
-                <MenuItem value="fed_batch">Fed-batch (stub)</MenuItem>
-              </Select>
-            </FormControl>
+            <Select
+              label="Mode"
+              value={mode}
+              onChange={(e) => handleModeChange(e.target.value)}
+            >
+              <MenuItem value="batch">Batch</MenuItem>
+              <MenuItem value="fed_batch">Fed-batch</MenuItem>
+            </Select>
+          </FormControl>
             <Button
               variant="contained"
               size="medium"
@@ -115,7 +131,7 @@ function ControlPanel({ onRun }) {
             </Button>
           </Box>
 
-          <ParameterForm values={values} onChange={handleFieldChange} />
+          <ParameterForm values={values} onChange={handleFieldChange} mode={mode} />
         </Stack>
       </CardContent>
     </Card>

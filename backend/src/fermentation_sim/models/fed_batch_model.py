@@ -15,10 +15,7 @@ class FedBatchSimulationResult:
 
 class FedBatchFermentationModel(BaseFermentationModel):
     """
-    Stub for fed-batch model.
-
-    You can extend this to call a different C kernel or implement volume dynamics
-    (dV/dt = F_in, etc.) on the Python side.
+    Fed-batch model built on the batch core with dilution and volume dynamics.
     """
 
     def simulate(self, request: SimulationRequest) -> FedBatchSimulationResult:
@@ -29,7 +26,7 @@ class FedBatchFermentationModel(BaseFermentationModel):
 
         batch_model = BatchFermentationModel()
         batch_result = batch_model.simulate(request)
-        volume = np.full_like(batch_result.time, request.volume)
+        volume = batch_result.state[:, 5]
 
         return FedBatchSimulationResult(
             time=batch_result.time, state=batch_result.state, volume=volume

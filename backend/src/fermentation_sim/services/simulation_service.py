@@ -43,5 +43,6 @@ class SimulationService:
                 "P": state[:, 2].tolist(),
                 "DO": state[:, 3].tolist(),
                 "T": state[:, 4].tolist(),
+                "V": state[:, 5].tolist(),
             },
         }

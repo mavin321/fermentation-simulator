@@ -14,6 +14,10 @@ typedef struct {
     double Ypx;
     double kd;
     double Kio;    // oxygen inhibition
+    double Kp;     // product inhibition
+    double maintenance; // substrate maintenance (g/gX/h)
+    double Q10;    // temperature factor
+    double T_ref;  // reference temperature (C)
     double Kla;    // volumetric mass transfer coefficient
     double C_star; // saturation DO
     double O2_maintenance;
@@ -28,10 +32,18 @@ typedef struct {
     double volume;     // L
     double feed_rate;  // L/h
     double feed_substrate_conc; // g/L
+    double feed_start; // h, time when feed begins
+    double feed_rate_end; // L/h, target feed rate (for ramp/exp)
+    double feed_tau; // h, time constant for exponential
+    int feed_mode; // 0=constant,1=ramp,2=exp,3=do_control
+    double do_setpoint; // g/L
+    double do_Kp;
     double aeration_rate;       // vvm
     double agitation_speed;     // rpm
     double cooling_temp;        // °C
     double coolant_flow;        // kg/s
+    double agit_power_coeff; // W/(L*rpm^3)
+    double agit_heat_eff;   // fraction to heat
 } OperatingConditions;
 
 /**
@@ -41,6 +53,7 @@ typedef struct {
  * state[2] = P (product, g/L)
  * state[3] = DO (dissolved oxygen, g/L)
  * state[4] = T (temperature, °C)
+ * state[5] = V (volume, L)
  */
 void fermentation_odes(
     double t,

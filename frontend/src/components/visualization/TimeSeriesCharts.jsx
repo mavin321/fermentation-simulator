@@ -41,19 +41,20 @@ function TimeSeriesCharts({ result }) {
     S: states.S[i],
     P: states.P[i],
     DO: states.DO[i],
-    T: states.T[i]
+    T: states.T[i],
+    V: states.V ? states.V[i] : null
   }));
 
   return (
-    <Card variant="outlined" sx={{ height: "100%" }}>
-      <CardContent sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <Card variant="outlined" sx={{ flex: 1 }}>
+      <CardContent sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Typography variant="subtitle1" gutterBottom>
           Time Series
         </Typography>
         <Typography variant="body2" color="text.secondary" gutterBottom>
           Monitor parallel signals and spot deviations quickly.
         </Typography>
-        <Box sx={{ flex: 1, minHeight: 320 }}>
+        <Box sx={{ height: 320 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
@@ -73,6 +74,14 @@ function TimeSeriesCharts({ result }) {
                 tick={{ fill: "#9fb2d1" }}
                 label={{ value: "Temperature (°C)", angle: 90, position: "insideRight", fill: "#9fb2d1" }}
               />
+              {states.V && (
+                <YAxis
+                  yAxisId={2}
+                  orientation="right"
+                  tick={{ fill: "#9fb2d1" }}
+                  label={{ value: "Volume (L)", angle: 90, position: "outsideRight", fill: "#9fb2d1" }}
+                />
+              )}
               <Tooltip
                 contentStyle={{
                   background: "rgba(12,18,38,0.9)",
@@ -86,6 +95,9 @@ function TimeSeriesCharts({ result }) {
               <Line type="monotone" dataKey="P" stroke="#ff9800" dot={false} strokeWidth={2} yAxisId={0} />
               <Line type="monotone" dataKey="DO" stroke="#29b6f6" dot={false} strokeWidth={2} yAxisId={0} />
               <Line type="monotone" dataKey="T" stroke="#ef5350" dot={false} strokeWidth={2} yAxisId={1} />
+              {states.V && (
+                <Line type="monotone" dataKey="V" stroke="#ab47bc" dot={false} strokeWidth={2} yAxisId={2} />
+              )}
             </LineChart>
           </ResponsiveContainer>
         </Box>

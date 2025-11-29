@@ -14,6 +14,7 @@ import {
 import ControlPanel from "../components/controls/ControlPanel.jsx";
 import TimeSeriesCharts from "../components/visualization/TimeSeriesCharts.jsx";
 import FermenterAnimation from "../components/visualization/FermenterAnimation.jsx";
+import VolumeChart from "../components/visualization/VolumeChart.jsx";
 import { useSimulation } from "../hooks/useSimulation.js";
 
 const Pill = ({ label, value, accent }) => (
@@ -176,7 +177,10 @@ function Dashboard() {
           </Stack>
         </Grid>
         <Grid item xs={12} md={4}>
-          <TimeSeriesCharts result={result} />
+          <Stack spacing={2}>
+            <TimeSeriesCharts result={result} />
+            <VolumeChart result={result} />
+          </Stack>
         </Grid>
       </Grid>
 
